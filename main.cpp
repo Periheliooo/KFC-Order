@@ -235,6 +235,14 @@ void printBanner() {
     cout << "请点单: ";
 }
 
+int calculatePrice(int* orderCount) {
+    int price = 0;
+    for (int i = 0; i <= 25; i++) {
+        price += orderCount[i] * list[i].price;
+    }
+    return price;
+}
+
 
 
 int main() {
@@ -268,8 +276,14 @@ int main() {
                 break;
             }
         }
+
+        cout << "您的点餐=" ;
         printCombo(orderCount, last);
         cout << endl;
+        cout << "共计：" << calculatePrice(orderCount) << "元" << endl;
+        cout << "点单完成，按回车键继续." << endl;
+        
+        
         waitNewline();
         clearScreen();
         delete[] orderCount;
