@@ -217,7 +217,7 @@ void printBanner() {
         }
 
         readCombo(orderCount, special[i].combo, last);
-        cout << special[i].name;
+        cout << special[i].name << "=";
         printCombo(orderCount, last);
         delete[] orderCount;
         cout << "=" << special[i].price;
@@ -255,8 +255,8 @@ void useCombo(int* orderCount, const char* combo) {
     }
 }
 
-int calculatePrice(int* orderCount) {
-    int price = 0;
+double calculatePrice(int* orderCount) {
+    double price = 0;
     int* orderCountCopied = new int[26] {0};
     if (orderCountCopied == NULL) {
         exit(1);
@@ -268,9 +268,12 @@ int calculatePrice(int* orderCount) {
     for (int i = 0; special[i].combo != NULL; i++) {
         if (canUse(orderCountCopied, special[i].combo)) {
             int* orderCountUsed = new int[26] {0};
-            int priceUsed = 0;
+            double priceUsed = 0;
             if (orderCountUsed == NULL) {
                 exit(1);
+            }
+            for (int i = 0; i <= 25; i++) {
+                orderCountUsed[i] = orderCountCopied[i];
             }
             useCombo(orderCountUsed, special[i].combo);
             priceUsed = special[i].price + calculatePrice(orderCountUsed);
