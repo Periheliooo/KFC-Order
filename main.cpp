@@ -161,6 +161,39 @@ void waitNewline(bool prompt = true) {
     }
 }
 
+void printCombo(const char* combo) {
+    int n = 26;
+    int* orderCount = new int[n] {0};
+    int last = 0;
+    if (orderCount == NULL) {
+        exit(1);
+    }
+
+    for (int i = 0; combo[i] != '\0'; i++) {
+        orderCount[combo[i] - 'A']++;
+        if (combo[i] - 'A' > last) {
+            last = combo[i] - 'A';
+        }
+    }
+
+    for (int i = 0; i <= last; i++) {
+        if (orderCount[i] == 0) {
+            continue;
+        }
+        if (orderCount[i] == 1) {
+            cout << list[i].name;
+        } 
+        if (orderCount[i] > 1) {
+            cout << list[i].name << "*" << orderCount[i];
+        }
+        if (i != last) {
+            cout << "+";
+        }
+    }
+
+    delete[] orderCount;
+}
+
 void printBanner() {
     cout << "=============================================================" << endl;
     cout << "                      KFC 2025夏季菜单" << endl;
@@ -183,12 +216,16 @@ void printBanner() {
     cout << endl;
     cout << "【优惠信息】：" << endl;
     for (int i = 0; special[i].combo != NULL; i++) {
-        setwPrint(special[i].name, 20, false);
-        for (int j = 0; special[i].combo[j] != '\0'; j++) {
-            cout << list[special[i].combo[j] - 'A'].name << "+";
-        }
+        cout << special[i].name;
+        printCombo(special[i].combo);
+        cout << "=" << special[i].price;
         cout << endl;
     }
+
+    cout << endl;
+    cout << "【输入规则说明】：" << endl;
+    cout << "ANV=香辣鸡腿堡+薯条(小)+百事可乐(小) / akaak=香辣鸡腿堡*3+香辣鸡翅*2" << endl;
+    cout << "字母不分大小写，不限顺序，单独输入0则退出程序" << endl;
 }
 
 int main() {
