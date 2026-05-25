@@ -194,8 +194,6 @@ void printCombo(int* orderCount, int last) {
             cout << "+";
         }
     }
-
-    delete[] orderCount;
 }
 
 void printBanner() {
@@ -224,6 +222,7 @@ void printBanner() {
         cout << special[i].name;
         int* orderCount = readCombo(special[i].combo, last);
         printCombo(orderCount, last);
+        delete[] orderCount;
         cout << "=" << special[i].price;
         cout << endl;
     }
@@ -232,13 +231,49 @@ void printBanner() {
     cout << "【输入规则说明】：" << endl;
     cout << "ANV=香辣鸡腿堡+薯条(小)+百事可乐(小) / akaak=香辣鸡腿堡*3+香辣鸡翅*2" << endl;
     cout << "字母不分大小写，不限顺序，单独输入0则退出程序" << endl;
+
+    cout << "请点单: ";
 }
 
 
 
 int main() {
     // TODO: 参考 demo 运行效果，编写代码。
-    printBanner();
+    while (true) {
+        printBanner();
+        int last = 0;
+        int* orderCount = new int[26] {0};
+        if (orderCount == NULL) {
+            exit(1);
+        }
+        
+        while (true) {
+            char ch = cin.get();
+            if (ch == '\n') {
+                break;
+            }
+            bool flag = false;
+            for (int i = 0; list[i].id != '\0'; i++) {
+                if (list[i].id == ch || list[i].id == ch - 32) {
+                    flag = true;
+                    orderCount[i]++;
+                    if (i > last) {
+                        last = i;
+                    }
+                }
+            }
+            if (!flag) {
+                cout << "输入错误" << endl;
+                delete[] orderCount;
+                break;
+            }
+        }
+        printCombo(orderCount, last);
+        cout << endl;
+        waitNewline();
+        clearScreen();
+        delete[] orderCount;
+    }
     
     return 0;
 }
