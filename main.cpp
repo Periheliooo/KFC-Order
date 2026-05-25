@@ -161,22 +161,14 @@ void waitNewline(bool prompt = true) {
     }
 }
 
-int* readCombo(const char* combo, int& last) {
-    int n = 26;
-    int* orderCount = new int[n] {0};
+void readCombo(int* count, const char* combo, int& last) {
     last = 0;
-
-    if (orderCount == NULL) {
-        exit(1);
-    }
-
     for (int i = 0; combo[i] != '\0'; i++) {
-        orderCount[combo[i] - 'A']++;
+        count[combo[i] - 'A']++;
         if (combo[i] - 'A' > last) {
             last = combo[i] - 'A';
         }
     }
-    return orderCount;
 }
 
 void printCombo(int* orderCount, int last) {
@@ -219,8 +211,13 @@ void printBanner() {
     cout << "【优惠信息】：" << endl;
     for (int i = 0; special[i].combo != NULL; i++) {
         int last;
+        int* orderCount = new int[26] {0};
+        if (orderCount == NULL) {
+            exit(1);
+        }
+
+        readCombo(orderCount, special[i].combo, last);
         cout << special[i].name;
-        int* orderCount = readCombo(special[i].combo, last);
         printCombo(orderCount, last);
         delete[] orderCount;
         cout << "=" << special[i].price;
@@ -235,15 +232,56 @@ void printBanner() {
     cout << "请点单: ";
 }
 
+bool canUse(int* orderCount, const char* combo) {
+    int last;
+    int* requireCount = new int[26] {0};
+    if (requireCount == NULL) {
+        exit(1);
+    }
+    readCombo(requireCount, combo, last);
+    for (int i = 0; i <= last; i++) {
+        if (orderCount[i] < requireCount[i]) {
+            delete[] requireCount;
+            return false;
+        }
+    }
+    delete[] requireCount;
+    return true;
+}
+
+void useCombo(int* orderCount, const char* combo) {
+    for (int i = 0; combo[i] != '\0'; i++) {
+        orderCount[combo[i] - 'A']-= 1;
+    }
+}
+
 int calculatePrice(int* orderCount) {
     int price = 0;
+    int* orderCountCopied = new int[26] {0};
+    if (orderCountCopied == NULL) {
+        exit(1);
+    }
     for (int i = 0; i <= 25; i++) {
-        price += orderCount[i] * list[i].price;
+        orderCountCopied[i] = orderCount[i];
+        price += orderCountCopied[i] * list[i].price;
+    }
+    for (int i = 0; special[i].combo != NULL; i++) {
+        if (canUse(orderCountCopied, special[i].combo)) {
+            int* orderCountUsed = new int[26] {0};
+            int priceUsed = 0;
+            if (orderCountUsed == NULL) {
+                exit(1);
+            }
+            useCombo(orderCountUsed, special[i].combo);
+            priceUsed = special[i].price + calculatePrice(orderCountUsed);
+            if (priceUsed < price) {
+                price = priceUsed;
+            }
+            delete[] orderCountUsed;
+        }
     }
     return price;
 }
-
-
 
 int main() {
     // TODO: 参考 demo 运行效果，编写代码。
