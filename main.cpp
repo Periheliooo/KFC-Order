@@ -161,10 +161,11 @@ void waitNewline(bool prompt = true) {
     }
 }
 
-void printCombo(const char* combo) {
+int* readCombo(const char* combo, int& last) {
     int n = 26;
     int* orderCount = new int[n] {0};
-    int last = 0;
+    last = 0;
+
     if (orderCount == NULL) {
         exit(1);
     }
@@ -175,7 +176,10 @@ void printCombo(const char* combo) {
             last = combo[i] - 'A';
         }
     }
+    return orderCount;
+}
 
+void printCombo(int* orderCount, int last) {
     for (int i = 0; i <= last; i++) {
         if (orderCount[i] == 0) {
             continue;
@@ -216,8 +220,10 @@ void printBanner() {
     cout << endl;
     cout << "【优惠信息】：" << endl;
     for (int i = 0; special[i].combo != NULL; i++) {
+        int last;
         cout << special[i].name;
-        printCombo(special[i].combo);
+        int* orderCount = readCombo(special[i].combo, last);
+        printCombo(orderCount, last);
         cout << "=" << special[i].price;
         cout << endl;
     }
@@ -227,6 +233,8 @@ void printBanner() {
     cout << "ANV=香辣鸡腿堡+薯条(小)+百事可乐(小) / akaak=香辣鸡腿堡*3+香辣鸡翅*2" << endl;
     cout << "字母不分大小写，不限顺序，单独输入0则退出程序" << endl;
 }
+
+
 
 int main() {
     // TODO: 参考 demo 运行效果，编写代码。
