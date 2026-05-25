@@ -147,9 +147,53 @@ const struct SPECIAL special[]={
 
 */
 
+// 等待从键盘输入回车。
+// 参数：prompt：是否显示“按下回车键继续”提示。默认为 true（显示）。
+void waitNewline(bool prompt = true) {
+    if (prompt) {
+        cout << "按下回车键继续..." << endl;
+    }
+
+    while (true) {  // 一个个读取输入字符，直到读到回车。
+        char ch = cin.get();  // 读一个字符。本行也可写成：char ch = getchar(); 同样是读入 1 个字符。
+        if (ch == '\n')  // 如果是换行，就不再读了。
+            break;
+    }
+}
+
+void printBanner() {
+    cout << "=============================================================" << endl;
+    cout << "                      KFC 2025夏季菜单" << endl;
+    cout << "=============================================================" << endl;
+
+    for (int i = 0; list[i].id != '\0'; i++) {
+        if (i % 2 == 0) {
+            cout << " " << list[i].id << " ";
+            setwPrint(list[i].name, 20, false);
+            setwPrint(list[i].price, 7, false);
+            cout << "|";
+        } else {
+            cout << "   " << list[i].id << " ";
+            setwPrint(list[i].name, 20, false);
+            setwPrint(list[i].price, 5, false);
+            cout << endl;
+        }
+    }
+
+    cout << endl;
+    cout << "【优惠信息】：" << endl;
+    for (int i = 0; special[i].combo != NULL; i++) {
+        setwPrint(special[i].name, 20, false);
+        for (int j = 0; special[i].combo[j] != '\0'; j++) {
+            cout << list[special[i].combo[j] - 'A'].name << "+";
+        }
+        cout << endl;
+    }
+}
 
 int main() {
     // TODO: 参考 demo 运行效果，编写代码。
-
+    printBanner();
+    
     return 0;
 }
